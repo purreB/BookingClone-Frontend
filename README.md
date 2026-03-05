@@ -21,12 +21,6 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 ## Things to add:
 [UI library](https://github.com/shadcn-ui/ui)
 
-Zustand or TanStack Query (React query), or both?
-
-[tRCP (maybe)](https://github.com/trpc/trpc)
-
-[React-Hook-Form](https://react-hook-form.com/)
-
 [Zod (maybe)](https://zod.dev/)
 
 [Playwright](https://playwright.dev/)
