@@ -3,14 +3,15 @@
 This TODO is structured for both human reading and potential agent implementation. Tasks are organized by feature area and include checkboxes for tracking.
 
 ## 🚀 Setup
-- [ ] Install dependencies:
+- [x] Install dependencies:
   - `@shadcn/ui` components
   - `@tanstack/react-query` (optional, if using caching)
   - `zod`, `@hookform/resolvers`, `react-hook-form`
   - `mapbox-gl`, `@mapbox/mapbox-gl-geocoder`
   - `playwright` for E2E tests
   - Tailwind CSS (via shadcn) and any required plugins
-- [ ] Create `.env.local` with `NEXT_PUBLIC_BACKEND_URL` and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`.
+- [x] Create `.env.local` with `NEXT_PUBLIC_BACKEND_URL` and `NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN`.
+- [x] Configure `tsconfig.json` and `eslint.config.mjs` as needed.
 
 ## 🧱 Core Layout & Providers
 - [ ] Configure `app/layout.tsx` with:
