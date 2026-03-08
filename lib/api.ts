@@ -1,7 +1,6 @@
 // API utilities
 export const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-
 export async function fetchHotels() {
   const res = await fetch(`${API_URL}/api/hotel`);
   return res.json();
