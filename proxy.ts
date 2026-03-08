@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Basic auth check - redirect to login if not authenticated
   const token = request.cookies.get('auth-token');
   if (!token && !request.nextUrl.pathname.startsWith('/(auth)')) {
