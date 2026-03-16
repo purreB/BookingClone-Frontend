@@ -1,18 +1,40 @@
 import { z } from 'zod';
 
-export const loginSchema = z.object({
+export const LoginSchema = z.object({
   email: z.email(),
   password: z.string().min(6),
 });
+export type LoginInput = z.infer<typeof LoginSchema>;
 
-export const registerSchema = z.object({
+export const RegisterSchema = z.object({
   name: z.string().min(2),
   email: z.email(),
   password: z.string().min(6),
 });
+export type RegisterInput = z.infer<typeof RegisterSchema>;
 
-export const bookingSchema = z.object({
-  hotelId: z.string(),
-  checkIn: z.string(),
-  checkOut: z.string(),
-});
+export const BookingSchema = z
+  .object({
+    hotelId: z.string().min(1),
+    checkIn: z.string().min(1),
+    checkOut: z.string().min(1),
+  })
+  .superRefine((data, ctx) => {
+    const checkIn = new Date(data.checkIn);
+    const checkOut = new Date(data.checkOut);
+
+    if (Number.isNaN(checkIn.getTime())) {
+      ctx.addIssue({ code: 'custom', message: 'Invalid check-in date', path: ['checkIn'] });
+    }
+    if (Number.isNaN(checkOut.getTime())) {
+      ctx.addIssue({ code: 'custom', message: 'Invalid check-out date', path: ['checkOut'] });
+    }
+    if (!Number.isNaN(checkIn.getTime()) && !Number.isNaN(checkOut.getTime()) && checkOut <= checkIn) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Check-out must be after check-in',
+        path: ['checkOut'],
+      });
+    }
+  });
+export type BookingInput = z.infer<typeof BookingSchema>;

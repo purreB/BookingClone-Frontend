@@ -3,9 +3,9 @@ import { useHotels } from '../lib/hooks';
 import { HotelCard } from '../components/hotel-card';
 
 export default function Home() {
-  const { data: hotels, isLoading } = useHotels();
+  const { data: hotels, isPending } = useHotels();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isPending) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto p-4">
