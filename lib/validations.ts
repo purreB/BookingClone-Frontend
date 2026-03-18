@@ -13,7 +13,7 @@ export const RegisterSchema = z.object({
 });
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 
-export const BookingSchema = z
+export const CreateBookingInputSchema = z
   .object({
     hotelId: z.string().min(1),
     checkIn: z.string().min(1),
@@ -37,4 +37,4 @@ export const BookingSchema = z
       });
     }
   });
-export type BookingInput = z.infer<typeof BookingSchema>;
+export type CreateBookingInput = z.infer<typeof CreateBookingInputSchema>;
