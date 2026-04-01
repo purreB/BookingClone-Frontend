@@ -1,10 +1,17 @@
 import React from 'react';
 
-export function HotelCard({ hotel }: { hotel: { name: string; location: string } }) {
+import type { Hotel } from '@/lib/api';
+
+export function HotelCard({ hotel }: { hotel: Hotel }) {
+  const subtitle =
+    (typeof hotel.address === 'string' && hotel.address) ||
+    (typeof hotel.location === 'string' && hotel.location) ||
+    null;
+
   return (
     <div className="border rounded p-4">
-      <h3>{hotel.name}</h3>
-      <p>{hotel.location}</p>
+      <h3>{hotel.name ?? 'Hotel'}</h3>
+      {subtitle ? <p>{subtitle}</p> : null}
     </div>
   );
 }
