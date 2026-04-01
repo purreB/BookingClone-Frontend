@@ -7,9 +7,10 @@ export const LoginSchema = z.object({
 export type LoginInput = z.infer<typeof LoginSchema>;
 
 export const RegisterSchema = z.object({
-  name: z.string().min(2),
+  fullName: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.email(),
   password: z.string().min(6),
+  role: z.enum(['Guest', 'Staff']),
 });
 export type RegisterInput = z.infer<typeof RegisterSchema>;
 
