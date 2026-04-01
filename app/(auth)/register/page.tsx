@@ -1,14 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { AuthRequestError, registerAccount } from "@/lib/api/auth-client";
+import { getAuthErrorMessage } from "@/lib/api/auth-client";
 import { useAuth } from "@/lib/auth";
+import { useRegisterMutation } from "@/lib/reactQuery/auth-mutations";
 import { authResponseToSession } from "@/lib/types/auth";
 import { cn } from "@/lib/utils";
 import { RegisterSchema, type RegisterInput } from "@/lib/validations";
@@ -33,25 +33,20 @@ export default function RegisterPage() {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: registerAccount,
-    onSuccess: (data) => {
+  const mutation = useRegisterMutation();
+
+  const handleSubmit = form.handleSubmit(async (values) => {
+    try {
+      const data = await mutation.mutateAsync(values);
       if (!data.accessToken) {
         form.setError("root", { message: "Registration succeeded but no token was returned." });
         return;
       }
       setSession(authResponseToSession(data));
       router.push("/");
-    },
-    onError: (error) => {
-      const message =
-        error instanceof AuthRequestError
-          ? error.message
-          : error instanceof Error
-            ? error.message
-            : "Something went wrong.";
-      form.setError("root", { message });
-    },
+    } catch (error) {
+      form.setError("root", { message: getAuthErrorMessage(error) });
+    }
   });
 
   return (
@@ -64,7 +59,7 @@ export default function RegisterPage() {
 
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
+          onSubmit={handleSubmit}
           noValidate
         >
           <div className="space-y-2">

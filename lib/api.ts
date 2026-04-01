@@ -1,3 +1,5 @@
+import { requestJson } from "@/lib/api/client";
+
 export interface Hotel {
   id: string;
   name?: string;
@@ -10,18 +12,10 @@ export interface Booking {
   [key: string]: unknown;
 }
 
-async function fetchJson<TResponse>(input: RequestInfo, init?: RequestInit): Promise<TResponse> {
-  const res = await fetch(input, init);
-  if (!res.ok) {
-    throw new Error(`Request failed with status ${res.status}`);
-  }
-  return (await res.json()) as TResponse;
-}
-
 export async function fetchHotels(): Promise<Hotel[]> {
-  return await fetchJson<Hotel[]>("/api/hotels");
+  return await requestJson<Hotel[]>("/api/hotels");
 }
 
 export async function fetchBookingsByUser(userId: string): Promise<Booking[]> {
-  return await fetchJson<Booking[]>(`/api/bookings?userId=${encodeURIComponent(userId)}`);
+  return await requestJson<Booking[]>(`/api/bookings?userId=${encodeURIComponent(userId)}`);
 }

@@ -1,43 +1,46 @@
 import type { AuthResponseDto } from '@/lib/types/auth';
 import type { LoginInput, RegisterInput } from '@/lib/validations';
+import { ApiRequestError, requestJson } from '@/lib/api/client';
 
-export class AuthRequestError extends Error {
-  constructor(
-    public readonly status: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = 'AuthRequestError';
-  }
-}
+export class AuthRequestError extends ApiRequestError {}
 
-async function parseAuthResponse(res: Response): Promise<AuthResponseDto> {
-  const text = await res.text();
-  if (!res.ok) {
-    throw new AuthRequestError(res.status, text.trim() || res.statusText);
-  }
-  return JSON.parse(text) as AuthResponseDto;
+export function getAuthErrorMessage(error: unknown): string {
+  if (error instanceof AuthRequestError) return error.message;
+  if (error instanceof Error) return error.message;
+  return 'Something went wrong.';
 }
 
 export async function loginWithCredentials(input: LoginInput): Promise<AuthResponseDto> {
-  const res = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(input),
-  });
-  return await parseAuthResponse(res);
+  try {
+    return await requestJson<AuthResponseDto>('/api/auth/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+  } catch (error) {
+    if (error instanceof ApiRequestError) {
+      throw new AuthRequestError(error.status, error.message);
+    }
+    throw error;
+  }
 }
 
 export async function registerAccount(input: RegisterInput): Promise<AuthResponseDto> {
-  const res = await fetch('/api/auth/register', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({
-      fullName: input.fullName,
-      email: input.email,
-      password: input.password,
-      role: input.role,
-    }),
-  });
-  return await parseAuthResponse(res);
+  try {
+    return await requestJson<AuthResponseDto>('/api/auth/register', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        fullName: input.fullName,
+        email: input.email,
+        password: input.password,
+        role: input.role,
+      }),
+    });
+  } catch (error) {
+    if (error instanceof ApiRequestError) {
+      throw new AuthRequestError(error.status, error.message);
+    }
+    throw error;
+  }
 }

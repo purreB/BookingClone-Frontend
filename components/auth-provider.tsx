@@ -9,7 +9,9 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
+import { authKeys } from '@/lib/queryKeys';
 import type { AuthSession } from '@/lib/types/auth';
 
 const AUTH_STORAGE_KEY = 'bookingclone.auth';
@@ -49,23 +51,28 @@ function readStoredSession(): AuthSession | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [session, setSessionState] = useState<AuthSession | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    setSessionState(readStoredSession());
+    const storedSession = readStoredSession();
+    setSessionState(storedSession);
+    queryClient.setQueryData(authKeys.session(), storedSession);
     setIsReady(true);
-  }, []);
+  }, [queryClient]);
 
   const setSession = useCallback((next: AuthSession) => {
     sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(next));
     setSessionState(next);
-  }, []);
+    queryClient.setQueryData(authKeys.session(), next);
+  }, [queryClient]);
 
   const logout = useCallback(() => {
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
     setSessionState(null);
-  }, []);
+    queryClient.setQueryData(authKeys.session(), null);
+  }, [queryClient]);
 
   const value = useMemo((): AuthContextValue => {
     const user: AuthUser | null = session

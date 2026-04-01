@@ -1,14 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { AuthRequestError, loginWithCredentials } from "@/lib/api/auth-client";
+import { getAuthErrorMessage } from "@/lib/api/auth-client";
 import { useAuth } from "@/lib/auth";
+import { useLoginMutation } from "@/lib/reactQuery/auth-mutations";
 import { authResponseToSession } from "@/lib/types/auth";
 import { cn } from "@/lib/utils";
 import { LoginSchema, type LoginInput } from "@/lib/validations";
@@ -28,25 +28,20 @@ export default function LoginPage() {
     defaultValues: { email: "", password: "" },
   });
 
-  const mutation = useMutation({
-    mutationFn: loginWithCredentials,
-    onSuccess: (data) => {
+  const mutation = useLoginMutation();
+
+  const handleSubmit = form.handleSubmit(async (values) => {
+    try {
+      const data = await mutation.mutateAsync(values);
       if (!data.accessToken) {
         form.setError("root", { message: "Sign-in succeeded but no token was returned." });
         return;
       }
       setSession(authResponseToSession(data));
       router.push("/");
-    },
-    onError: (error) => {
-      const message =
-        error instanceof AuthRequestError
-          ? error.message
-          : error instanceof Error
-            ? error.message
-            : "Something went wrong.";
-      form.setError("root", { message });
-    },
+    } catch (error) {
+      form.setError("root", { message: getAuthErrorMessage(error) });
+    }
   });
 
   return (
@@ -59,7 +54,7 @@ export default function LoginPage() {
 
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit((values) => mutation.mutate(values))}
+          onSubmit={handleSubmit}
           noValidate
         >
           <div className="space-y-2">
