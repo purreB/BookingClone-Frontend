@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { z } from 'zod';
+import { flattenError, z } from 'zod';
 
 import { backendFetch, proxyJsonResponse } from '@/lib/server/backend';
 import { CreateBookingInputSchema } from '@/lib/validations';
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   const parsed = CreateBookingInputSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: { code: 'VALIDATION_ERROR', message: 'Invalid request body', details: parsed.error.flatten() } },
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid request body', details: flattenError(parsed.error) } },
       { status: 422 },
     );
   }
@@ -29,7 +29,7 @@ export async function DELETE(request: NextRequest) {
   const parsed = CancelBookingSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: { code: 'VALIDATION_ERROR', message: 'Invalid request body', details: parsed.error.flatten() } },
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid request body', details: flattenError(parsed.error) } },
       { status: 422 },
     );
   }

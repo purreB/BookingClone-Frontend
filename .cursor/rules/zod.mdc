@@ -35,7 +35,7 @@ Follow these rules:
 
 ## Error Handling
 - Use schema.safeParse() in API routes — never let .parse() throw unhandled
-- Format errors with z.ZodError.flatten() for form-friendly { fieldErrors, formErrors }
+- Format errors with `flattenError(err)` from `zod` (Zod 4) for form-friendly `{ fieldErrors, formErrors }` — avoid deprecated `err.flatten()`
 - Map Zod errors to user-facing messages — don't expose raw Zod error strings
 - Create a shared parseOrThrow utility that wraps safeParse with consistent error responses
 

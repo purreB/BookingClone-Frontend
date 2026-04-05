@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { canManageHotels } from "@/lib/auth-roles";
 import { useAuth } from "@/lib/auth";
 
 export default function Navbar() {
@@ -21,6 +22,11 @@ export default function Navbar() {
             <span className="max-w-48 truncate text-sm text-muted-foreground" title={user.email ?? undefined}>
               {user.fullName ?? user.email ?? user.userId}
             </span>
+            {canManageHotels(user.roles) ? (
+              <Link href="/staff" className="text-sm text-foreground hover:underline">
+                Staff
+              </Link>
+            ) : null}
             <Link href="/profile" className="text-sm text-foreground hover:underline">
               Profile
             </Link>

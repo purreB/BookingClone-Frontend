@@ -39,3 +39,15 @@ export const CreateBookingInputSchema = z
     }
   });
 export type CreateBookingInput = z.infer<typeof CreateBookingInputSchema>;
+
+export const CreateHotelSchema = z.object({
+  name: z
+    .string()
+    .transform((s) => s.trim())
+    .pipe(z.string().min(1, 'Name is required')),
+  address: z
+    .string()
+    .transform((s) => s.trim())
+    .pipe(z.string().min(1, 'Address is required')),
+});
+export type CreateHotelInput = z.infer<typeof CreateHotelSchema>;
